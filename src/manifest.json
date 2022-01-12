@@ -1,0 +1,28 @@
+{
+  "name": "Wordle Solver",
+  "description": "Generate guesses for Wordle",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "48": "images/wordle_logo_48x48.png",
+    "72": "images/wordle_logo_72x72.png",
+    "96": "images/wordle_logo_96x96.png",
+    "144": "images/wordle_logo_144x144.png",
+    "168": "images/wordle_logo_168x168.png",
+    "192": "images/wordle_logo_192x192.png",
+    "512": "images/wordle_logo_512x512.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.powerlanguage.co.uk/wordle/"],
+      "css": ["styles.css"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["https://www.powerlanguage.co.uk/*"]
+    }
+  ]
+}
