@@ -1,0 +1,22 @@
+{
+  "name": "wordle-solver",
+  "version": "1.0.0",
+  "description": "Chrome extension for solving Wordle",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leyanlo/wordle-solver.git"
+  },
+  "keywords": [
+    "wordle",
+    "Chrome extension"
+  ],
+  "author": "Leyan Lo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leyanlo/wordle-solver/issues"
+  },
+  "homepage": "https://github.com/leyanlo/wordle-solver#readme",
+  "devDependencies": {
+    "prettier": "^2.2.1"
+  }
+}
