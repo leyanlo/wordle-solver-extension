@@ -49,6 +49,12 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
           ) && present.flat().every((char) => word.includes(char))
     );
 
+    // avoid computation if first word
+    if (words.length === 2315) {
+      console.log('raise');
+      return;
+    }
+
     let minEv = 1;
     let bestWord = null;
     for (const a of words) {
