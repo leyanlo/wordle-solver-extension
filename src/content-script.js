@@ -63,16 +63,17 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
           counts[key] = (counts[key] ?? 0) + 1;
         }
       }
-      const ev = Object.keys(counts)
-        .filter((key) => key.length === 5)
-        .reduce(
-          (acc, key) =>
-            acc +
-            [...Array(5).keys()]
-              .map((i) => counts[key.slice(0, i + 1)] / words.length)
-              .reduce((acc, count) => acc * count),
-          0
-        );
+
+      let ev = 0;
+      for (let i = 0; i < 3 ** 5; i++) {
+        const key = i.toString(3).padStart(5, '0');
+        let product = 1;
+        for (let j = 0; j < 5; j++) {
+          product *= (counts[key.slice(0, j + 1)] ?? 0) / words.length;
+        }
+        ev += product;
+      }
+
       if (ev <= minEv) {
         minEv = ev;
         bestWord = a;
