@@ -49,20 +49,35 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
           ) && present.flat().every((char) => word.includes(char))
     );
 
-    let minExclusives = words.length;
+    let minEv = 1;
     let bestWord = null;
-    outer: for (const a of words) {
-      let nExclusives = 0;
+    for (const a of words) {
+      const counts = {};
       for (const b of words) {
-        if (isExclusive(a, b)) {
-          nExclusives++;
-          if (nExclusives > minExclusives) {
-            continue outer;
-          }
+        const evals = [];
+        for (let i = 0; i < b.length; i++) {
+          evals.push(
+            b[i] === a[i] ? 'correct' : a.includes(b[i]) ? 'present' : 'absent'
+          );
+          const key = evals.join();
+          counts[key] = (counts[key] ?? 0) + 1;
         }
       }
-      minExclusives = nExclusives;
-      bestWord = a;
+      const ev = Object.keys(counts)
+        .map((key) => key.split(','))
+        .filter((evals) => evals.length === 5)
+        .reduce(
+          (acc, evals) =>
+            acc +
+            [...Array(5).keys()]
+              .map((i) => counts[evals.slice(0, i + 1).join()] / words.length)
+              .reduce((acc, count) => acc * count),
+          0
+        );
+      if (ev <= minEv) {
+        minEv = ev;
+        bestWord = a;
+      }
     }
     console.log(bestWord);
   });
