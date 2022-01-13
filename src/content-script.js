@@ -25,7 +25,8 @@ outer: for (const row of board) {
         absent.push(letter);
         break;
       default:
-        continue outer;
+        // end of rows
+        break outer;
     }
   }
 }
