@@ -7,6 +7,10 @@ const board = [
   }))
 );
 
+const CORRECT = 0;
+const PRESENT = 1;
+const ABSENT = 2;
+
 const correct = Array(5).fill(null);
 const present = [...Array(5)].map(() => []);
 const absent = [];
@@ -31,10 +35,6 @@ outer: for (const row of board) {
   }
 }
 
-function isExclusive(a, b) {
-  return a.split('').every((char) => !b.includes(char));
-}
-
 fetch(chrome.runtime.getURL('assets/wordlist.json'))
   .then((response) => response.json())
   .then((words) => {
@@ -57,20 +57,19 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
         const evals = [];
         for (let i = 0; i < b.length; i++) {
           evals.push(
-            b[i] === a[i] ? 'correct' : a.includes(b[i]) ? 'present' : 'absent'
+            b[i] === a[i] ? CORRECT : a.includes(b[i]) ? PRESENT : ABSENT
           );
-          const key = evals.join();
+          const key = evals.join('');
           counts[key] = (counts[key] ?? 0) + 1;
         }
       }
       const ev = Object.keys(counts)
-        .map((key) => key.split(','))
-        .filter((evals) => evals.length === 5)
+        .filter((key) => key.length === 5)
         .reduce(
-          (acc, evals) =>
+          (acc, key) =>
             acc +
             [...Array(5).keys()]
-              .map((i) => counts[evals.slice(0, i + 1).join()] / words.length)
+              .map((i) => counts[key.slice(0, i + 1)] / words.length)
               .reduce((acc, count) => acc * count),
           0
         );
