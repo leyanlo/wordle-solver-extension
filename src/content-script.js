@@ -49,41 +49,49 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
           ) && present.flat().every((char) => word.includes(char))
     );
 
+    let bestWord = null;
+
     // avoid computation if first word
     if (words.length === 2315) {
-      console.log('raise');
-      return;
-    }
+      bestWord = 'raise';
+    } else {
+      let minEv = 1;
+      for (const a of words) {
+        const counts = {};
+        for (const b of words) {
+          const evals = [];
+          for (let i = 0; i < b.length; i++) {
+            evals.push(
+              b[i] === a[i] ? CORRECT : a.includes(b[i]) ? PRESENT : ABSENT
+            );
+            const key = evals.join('');
+            counts[key] = (counts[key] ?? 0) + 1;
+          }
+        }
 
-    let minEv = 1;
-    let bestWord = null;
-    for (const a of words) {
-      const counts = {};
-      for (const b of words) {
-        const evals = [];
-        for (let i = 0; i < b.length; i++) {
-          evals.push(
-            b[i] === a[i] ? CORRECT : a.includes(b[i]) ? PRESENT : ABSENT
-          );
-          const key = evals.join('');
-          counts[key] = (counts[key] ?? 0) + 1;
+        let ev = 0;
+        for (let i = 0; i < 3 ** 5; i++) {
+          const key = i.toString(3).padStart(5, '0');
+          let product = 1;
+          for (let j = 0; j < 5; j++) {
+            product *= (counts[key.slice(0, j + 1)] ?? 0) / words.length;
+          }
+          ev += product;
+        }
+
+        if (ev <= minEv) {
+          minEv = ev;
+          bestWord = a;
         }
       }
-
-      let ev = 0;
-      for (let i = 0; i < 3 ** 5; i++) {
-        const key = i.toString(3).padStart(5, '0');
-        let product = 1;
-        for (let j = 0; j < 5; j++) {
-          product *= (counts[key.slice(0, j + 1)] ?? 0) / words.length;
-        }
-        ev += product;
-      }
-
-      if (ev <= minEv) {
-        minEv = ev;
-        bestWord = a;
-      }
     }
-    console.log(bestWord);
-  });
+
+    return Promise.resolve({ words, bestWord });
+  })
+  .then(({ words, bestWord }) =>
+    console.log(
+      words.length > 1
+        ? `${words.length} words are possible. Best guess: ${bestWord}`
+        : `The answer is ${bestWord}!`
+    )
+  );
