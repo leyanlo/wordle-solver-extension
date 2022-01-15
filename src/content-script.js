@@ -71,7 +71,7 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
         const variance = counts
           .map((count) => count ** 2)
           .reduce((acc, n) => acc + n);
-        if (variance < minVariance) {
+        if (variance <= minVariance) {
           minVariance = variance;
           bestWord = a;
         }
