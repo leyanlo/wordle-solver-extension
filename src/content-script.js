@@ -44,11 +44,9 @@ fetch(chrome.runtime.getURL('assets/wordlist.json'))
           .every((char, i) =>
             correct[i]
               ? correct[i] === char
-              : present[i].includes(char) || absent[i].includes(char)
-              ? false
-              : allAbsent.includes(char)
-              ? allPresent.includes(char)
-              : true
+              : !present[i].includes(char) &&
+                !absent[i].includes(char) &&
+                (!allAbsent.includes(char) || allPresent.includes(char))
           ) && allPresent.every((char) => word.includes(char))
     );
 
