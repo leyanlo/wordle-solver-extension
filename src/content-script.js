@@ -6,11 +6,10 @@ function init() {
   for (const rowNode of document
     .querySelector('game-app')
     .shadowRoot.querySelectorAll(`game-row`)) {
-    for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
-      observer.observe(tileNode, {
-        attributeFilter: ['evaluation'],
-      });
-    }
+    const tileNode = rowNode.shadowRoot.querySelector('game-tile');
+    observer.observe(tileNode, {
+      attributeFilter: ['evaluation'],
+    });
   }
 
   // init allWords and call onEval
