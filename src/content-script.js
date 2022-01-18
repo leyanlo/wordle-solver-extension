@@ -95,7 +95,10 @@ function onEval() {
     }
   }
 
-  if (words.length === 1) {
+  if (
+    words.length === 1 &&
+    board[board.length - 1].some(({ evaluation }) => evaluation !== 'correct')
+  ) {
     console.log(`1 word is possible. Best guess: ${bestWord}`);
   } else if (words.length > 1) {
     console.log(`${words.length} words are possible. Best guess: ${bestWord}`);
