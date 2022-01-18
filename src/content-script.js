@@ -1,11 +1,18 @@
+const gameRows = document
+  .querySelector('game-app')
+  .shadowRoot.querySelectorAll(`game-row`);
+const rowOffsets = [...gameRows].map((rowNode) => ({
+  top: rowNode.offsetTop,
+  left: rowNode.offsetLeft,
+  width: rowNode.offsetWidth,
+  height: rowNode.offsetHeight,
+}));
 const observer = new MutationObserver(() => onEval());
 let allWords = [];
 
 function init() {
   // add observer to each row
-  for (const rowNode of document
-    .querySelector('game-app')
-    .shadowRoot.querySelectorAll(`game-row`)) {
+  for (const rowNode of gameRows) {
     const tileNode = rowNode.shadowRoot.querySelector('game-tile');
     observer.observe(tileNode, {
       attributeFilter: ['evaluation'],
@@ -22,24 +29,7 @@ function init() {
 }
 init();
 
-function onEval() {
-  const board = [];
-
-  outer: for (const rowNode of document
-    .querySelector('game-app')
-    .shadowRoot.querySelectorAll(`game-row`)) {
-    const row = [];
-    for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
-      const letter = tileNode.getAttribute('letter');
-      const evaluation = tileNode.getAttribute('evaluation');
-      if (!evaluation) {
-        break outer;
-      }
-      row.push({ letter, evaluation });
-    }
-    board.push(row);
-  }
-
+function onEvalBoard(board) {
   const correct = Array(5).fill(null);
   const present = [...Array(5)].map(() => []);
   const absent = [...Array(5)].map(() => []);
@@ -113,5 +103,24 @@ function onEval() {
     console.log(`1 word is possible. Best guess: ${bestWord}`);
   } else if (words.length > 1) {
     console.log(`${words.length} words are possible. Best guess: ${bestWord}`);
+  }
+}
+
+function onEval() {
+  const board = [];
+  onEvalBoard(board);
+
+  outer: for (const rowNode of gameRows) {
+    const row = [];
+    for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
+      const letter = tileNode.getAttribute('letter');
+      const evaluation = tileNode.getAttribute('evaluation');
+      if (!evaluation) {
+        break outer;
+      }
+      row.push({ letter, evaluation });
+    }
+    board.push(row);
+    onEvalBoard(board);
   }
 }
