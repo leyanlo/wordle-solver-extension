@@ -1,12 +1,27 @@
 const observer = new MutationObserver(() => onEval());
+let allWords = [];
 
-let words = [];
-fetch(chrome.runtime.getURL('assets/wordlist.json'))
-  .then((response) => response.json())
-  .then((wordlist) => {
-    words = wordlist;
-    onEval();
-  });
+function init() {
+  // add observer to each row
+  for (const rowNode of document
+    .querySelector('game-app')
+    .shadowRoot.querySelectorAll(`game-row`)) {
+    for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
+      observer.observe(tileNode, {
+        attributeFilter: ['evaluation'],
+      });
+    }
+  }
+
+  // init allWords and call onEval
+  fetch(chrome.runtime.getURL('assets/wordlist.json'))
+    .then((response) => response.json())
+    .then((wordlist) => {
+      allWords = wordlist;
+      onEval();
+    });
+}
+init();
 
 function onEval() {
   const board = [];
@@ -19,9 +34,6 @@ function onEval() {
       const letter = tileNode.getAttribute('letter');
       const evaluation = tileNode.getAttribute('evaluation');
       if (!evaluation) {
-        observer.observe(tileNode, {
-          attributeFilter: ['evaluation'],
-        });
         break outer;
       }
       row.push({ letter, evaluation });
@@ -56,7 +68,7 @@ function onEval() {
   const allPresent = present.flat();
   const allAbsent = absent.flat();
 
-  words = words.filter(
+  const words = allWords.filter(
     (word) =>
       word
         .split('')
@@ -72,7 +84,7 @@ function onEval() {
   let bestWord = null;
 
   // avoid computation if first word
-  if (words.length === 2315) {
+  if (words.length === allWords.length) {
     bestWord = 'slate';
   } else {
     let minVariance = words.length ** 2;
