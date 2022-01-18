@@ -29,7 +29,15 @@ function init() {
 }
 init();
 
-function onEvalBoard(board) {
+function onEvalBoard(board, rowIdx) {
+  const clueId = `clue-${rowIdx}`;
+  if (
+    document.getElementById(clueId) ||
+    board[board.length - 1]?.every(({ evaluation }) => evaluation === 'correct')
+  ) {
+    return;
+  }
+
   const correct = Array(5).fill(null);
   const present = [...Array(5)].map(() => []);
   const absent = [...Array(5)].map(() => []);
@@ -96,21 +104,30 @@ function onEvalBoard(board) {
     }
   }
 
-  if (
-    words.length === 1 &&
-    board[board.length - 1].some(({ evaluation }) => evaluation !== 'correct')
-  ) {
-    console.log(`1 word is possible. Best guess: ${bestWord}`);
+  const clue = document.createElement('p');
+  clue.id = clueId;
+  clue.className = 'clue';
+  clue.style.setProperty('--clue-top', rowOffsets[rowIdx].top + 'px');
+  clue.style.setProperty(
+    '--clue-left',
+    rowOffsets[rowIdx].left + rowOffsets[rowIdx].width + 'px'
+  );
+  clue.style.setProperty('--clue-height', rowOffsets[rowIdx].height + 'px');
+  if (words.length === 1) {
+    clue.textContent = `1 word is possible. Best guess: ${bestWord}`;
   } else if (words.length > 1) {
-    console.log(`${words.length} words are possible. Best guess: ${bestWord}`);
+    clue.textContent = `${words.length} words are possible. Best guess: ${bestWord}`;
+  } else {
+    return;
   }
+  document.body.appendChild(clue);
 }
 
 function onEval() {
   const board = [];
-  onEvalBoard(board);
-
-  outer: for (const rowNode of gameRows) {
+  outer: for (let i = 0; i < gameRows.length; i++) {
+    onEvalBoard(board, i);
+    const rowNode = gameRows[i];
     const row = [];
     for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
       const letter = tileNode.getAttribute('letter');
@@ -121,6 +138,5 @@ function onEval() {
       row.push({ letter, evaluation });
     }
     board.push(row);
-    onEvalBoard(board);
   }
 }

@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+}
+
+.clue {
+  position: fixed;
+  top: var(--clue-top);
+  left: var(--clue-left);
+  margin-left: 5px;
+  height: var(--clue-height);
+  display: flex;
+  align-items: center;
+}
