@@ -9,6 +9,7 @@ const rowOffsets = [...gameRows].map((rowNode) => ({
 }));
 const observer = new MutationObserver(() => onEval());
 let allWords = [];
+let allVariances = {};
 
 function init() {
   // add observer to each row
@@ -19,13 +20,19 @@ function init() {
     });
   }
 
-  // init allWords and call onEval
-  fetch(chrome.runtime.getURL('assets/wordlist.json'))
-    .then((response) => response.json())
-    .then((wordlist) => {
-      allWords = wordlist;
-      onEval();
-    });
+  // init allWords and variances, and call onEval
+  Promise.all([
+    fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
+      response.json()
+    ),
+    fetch(chrome.runtime.getURL('assets/variances.json')).then((response) =>
+      response.json()
+    ),
+  ]).then(([wordlist, variances]) => {
+    allWords = wordlist;
+    allVariances = variances;
+    onEval();
+  });
 }
 init();
 
@@ -78,15 +85,13 @@ function onEvalBoard(board, rowIdx) {
         ) && allPresent.every((char) => word.includes(char))
   );
 
-  let bestWord = null;
-
+  let variances = {};
   if (words.length === 0) {
     return;
   } else if (words.length === allWords.length) {
     // avoid computation if first word
-    bestWord = 'slate';
+    variances = allVariances;
   } else {
-    let minVariance = words.length ** 2;
     for (const a of words) {
       const counts = Array(3 ** 5).fill(0);
       for (const b of words) {
@@ -96,15 +101,14 @@ function onEvalBoard(board, rowIdx) {
         }
         counts[parseInt(evals.join(''), 3)]++;
       }
-      const variance = counts
+      variances[a] = counts
         .map((count) => count ** 2)
         .reduce((acc, n) => acc + n);
-      if (variance <= minVariance) {
-        minVariance = variance;
-        bestWord = a;
-      }
     }
   }
+  const bestWord = Object.entries(variances).sort(
+    ([_a, a], [_b, b]) => a - b
+  )[0][0];
 
   const clueGuess = `Best guess: <strong>${bestWord}</strong>`;
   const clueStats =
