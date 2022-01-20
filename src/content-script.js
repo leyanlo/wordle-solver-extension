@@ -80,8 +80,10 @@ function onEvalBoard(board, rowIdx) {
 
   let bestWord = null;
 
-  // avoid computation if first word
-  if (words.length === allWords.length) {
+  if (words.length === 0) {
+    return;
+  } else if (words.length === allWords.length) {
+    // avoid computation if first word
     bestWord = 'slate';
   } else {
     let minVariance = words.length ** 2;
@@ -104,6 +106,12 @@ function onEvalBoard(board, rowIdx) {
     }
   }
 
+  const clueGuess = `Best guess: <strong>${bestWord}</strong>`;
+  const clueStats =
+    words.length === 1
+      ? `1 word is possible.`
+      : `${words.length} words are possible.`;
+
   const clue = document.createElement('p');
   clue.id = clueId;
   clue.className = 'clue';
@@ -113,13 +121,7 @@ function onEvalBoard(board, rowIdx) {
     rowOffsets[rowIdx].left + rowOffsets[rowIdx].width + 'px'
   );
   clue.style.setProperty('--clue-height', rowOffsets[rowIdx].height + 'px');
-  if (words.length === 1) {
-    clue.textContent = `1 word is possible. Best guess: ${bestWord}`;
-  } else if (words.length > 1) {
-    clue.textContent = `${words.length} words are possible. Best guess: ${bestWord}`;
-  } else {
-    return;
-  }
+  clue.innerHTML = `${clueGuess}<br />${clueStats}`;
   document.body.appendChild(clue);
 }
 
