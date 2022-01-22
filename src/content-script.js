@@ -1,8 +1,12 @@
 const gameRows = document
   .querySelector('game-app')
   .shadowRoot.querySelectorAll(`game-row`);
-const rowWidth = gameRows[0].offsetWidth;
-const rowHeight = gameRows[0].offsetHeight;
+const rowOffsets = [...gameRows].map((rowNode) => ({
+  top: rowNode.offsetTop,
+  left: rowNode.offsetLeft,
+  width: rowNode.offsetWidth,
+  height: rowNode.offsetHeight,
+}));
 const observer = new MutationObserver(() => onEval());
 let allWords = [];
 let allEvs = {};
@@ -59,9 +63,10 @@ function getTiles(a, b) {
   return evals.join('');
 }
 
-function onEvalBoard(board, root) {
+function onEvalBoard(board, rowIdx) {
+  const clueId = `clue-${rowIdx}`;
   if (
-    root.getElementById('clue') ||
+    document.getElementById(clueId) ||
     board[board.length - 1]?.every(({ evaluation }) => evaluation === 'correct')
   ) {
     return;
@@ -140,13 +145,14 @@ function onEvalBoard(board, root) {
       : `${words.length} words are possible.`;
 
   const clue = document.createElement('p');
-  clue.id = 'clue';
-  Object.assign(clue.style, {
-    position: 'fixed',
-    transform: `translate(${rowWidth}px, -${rowHeight}px)`,
-    marginTop: '10px',
-    marginLeft: '10px',
-  });
+  clue.id = clueId;
+  clue.className = 'clue';
+  clue.style.setProperty('--clue-top', rowOffsets[rowIdx].top + 'px');
+  clue.style.setProperty(
+    '--clue-left',
+    rowOffsets[rowIdx].left + rowOffsets[rowIdx].width + 'px'
+  );
+  clue.style.setProperty('--clue-height', rowOffsets[rowIdx].height + 'px');
   clue.innerHTML = `
 ${clueGuess}
 <br />
@@ -164,15 +170,14 @@ ${clueGuess}
       .join('')}
   </ul>
 </details>`;
-  root.appendChild(clue);
+  document.body.appendChild(clue);
 }
 
 function onEval() {
   const board = [];
   outer: for (let i = 0; i < gameRows.length; i++) {
+    onEvalBoard(board, i);
     const rowNode = gameRows[i];
-    onEvalBoard(board, rowNode.shadowRoot);
-
     const row = [];
     for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
       const letter = tileNode.getAttribute('letter');
