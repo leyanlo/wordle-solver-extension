@@ -3,11 +3,11 @@
 }
 
 .clue {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   transform: translate(var(--clue-left), var(--clue-top));
-  margin-left: 8px;
+  margin-left: 10px;
   margin-top: 10px;
   background: white;
 }
