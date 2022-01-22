@@ -9,7 +9,7 @@ const rowOffsets = [...gameRows].map((rowNode) => ({
 }));
 const observer = new MutationObserver(() => onEval());
 let allWords = [];
-let allVariances = {};
+let allEvs = {};
 
 function init() {
   // add observer to each row
@@ -25,12 +25,12 @@ function init() {
     fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
       response.json()
     ),
-    fetch(chrome.runtime.getURL('assets/variances.json')).then((response) =>
+    fetch(chrome.runtime.getURL('assets/evs.json')).then((response) =>
       response.json()
     ),
-  ]).then(([wordlist, variances]) => {
+  ]).then(([wordlist, evs]) => {
     allWords = wordlist;
-    allVariances = variances;
+    allEvs = evs;
     onEval();
   });
 }
@@ -85,32 +85,40 @@ function onEvalBoard(board, rowIdx) {
         ) && allPresent.every((char) => word.includes(char))
   );
 
-  let variances = {};
+  let evs = {};
   if (words.length === 0) {
     return;
   } else if (words.length === allWords.length) {
     // avoid computation if first word
-    variances = allVariances;
+    evs = allEvs;
   } else {
     for (const a of words) {
-      const counts = Array(3 ** 5).fill(0);
+      const counts = {};
       for (const b of words) {
         const evals = [];
         for (let i = 0; i < b.length; i++) {
           evals.push(b[i] === a[i] ? 0 : a.includes(b[i]) ? 1 : 2);
         }
-        counts[parseInt(evals.join(''), 3)]++;
+        const key = parseInt(evals.join(''), 3);
+        counts[key] = (counts[key] ?? 0) + 1;
       }
-      variances[a] = counts
-        .map((count) => count ** 2)
-        .reduce((acc, n) => acc + n);
+      evs[a] =
+        Object.keys(counts)
+          .map((key) => counts[key] ** 2)
+          .reduce((acc, n) => acc + n) / words.length;
     }
   }
-  const bestWord = Object.entries(variances).sort(
-    ([_a, a], [_b, b]) => a - b
-  )[0][0];
+  const sortedEvEntries = Object.entries(evs).sort(([, a], [, b]) => a - b);
+  const minEv = sortedEvEntries[0][1];
+  const bestWords = sortedEvEntries
+    .filter(([, ev]) => ev === minEv)
+    .map(([w]) => w);
 
-  const clueGuess = `Best guess: <strong>${bestWord}</strong>`;
+  const clueGuess = `Best guess: ${bestWords
+    .map((w) => `<strong>${w}</strong>`)
+    .join(' or ')} (<abbr title="expected value">EV</abbr> = ${minEv.toFixed(
+    1
+  )})`;
   const clueStats =
     words.length === 1
       ? `1 word is possible.`
