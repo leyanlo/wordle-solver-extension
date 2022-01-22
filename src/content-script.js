@@ -170,7 +170,14 @@ ${clueGuess}
       .join('')}
   </ul>
 </details>`;
-  document.body.appendChild(clue);
+  if (rowIdx === 0) {
+    document.body.appendChild(clue);
+  } else {
+    document.body.insertBefore(
+      clue,
+      document.getElementById(`clue-${rowIdx - 1}`)
+    );
+  }
 }
 
 function onEval() {

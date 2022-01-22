@@ -9,4 +9,5 @@
   transform: translate(var(--clue-left), var(--clue-top));
   margin-left: 8px;
   margin-top: 10px;
+  background: white;
 }
