@@ -91,9 +91,6 @@ function onEvalBoard(board, root) {
     }
   }
 
-  const allPresent = present.flat();
-  const allAbsent = absent.flat();
-
   const words = allWords.filter(
     (word) =>
       word
@@ -103,8 +100,8 @@ function onEvalBoard(board, root) {
             ? correct[i] === char
             : !present[i].includes(char) &&
               !absent[i].includes(char) &&
-              (!allAbsent.includes(char) || allPresent.includes(char))
-        ) && allPresent.every((char) => word.includes(char))
+              (!absent.flat().includes(char) || present.flat().includes(char))
+        ) && present.flat().every((char) => word.includes(char))
   );
 
   let evs = {};
