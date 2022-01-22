@@ -36,6 +36,33 @@ function init() {
 }
 init();
 
+function getTiles(a, b) {
+  const evals = Array(5).fill('⬛️');
+  const counts = [...a].reduce((acc, char) => {
+    acc[char] = (acc[char] ?? 0) + 1;
+    return acc;
+  }, {});
+  const wrongIndexes = [];
+
+  for (let i = 0; i < 5; i++) {
+    if (b[i] === a[i]) {
+      evals[i] = '🟩';
+      counts[b[i]]--;
+    } else {
+      wrongIndexes.push(i);
+    }
+  }
+
+  for (const i of wrongIndexes) {
+    if (counts[b[i]]) {
+      evals[i] = '🟨';
+      counts[b[i]]--;
+    }
+  }
+
+  return evals.join('');
+}
+
 function onEvalBoard(board, rowIdx) {
   const clueId = `clue-${rowIdx}`;
   if (
@@ -95,12 +122,8 @@ function onEvalBoard(board, rowIdx) {
     for (const a of words) {
       const counts = {};
       for (const b of words) {
-        const evals = [];
-        for (let i = 0; i < b.length; i++) {
-          evals.push(b[i] === a[i] ? 0 : a.includes(b[i]) ? 1 : 2);
-        }
-        const key = parseInt(evals.join(''), 3);
-        counts[key] = (counts[key] ?? 0) + 1;
+        const tiles = getTiles(a, b);
+        counts[tiles] = (counts[tiles] ?? 0) + 1;
       }
       evs[a] =
         Object.keys(counts)
