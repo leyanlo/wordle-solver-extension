@@ -147,7 +147,23 @@ function onEvalBoard(board, root) {
     marginTop: '10px',
     marginLeft: '10px',
   });
-  clue.innerHTML = `${clueGuess}<br />${clueStats}`;
+  clue.innerHTML = `
+${clueGuess}
+<br />
+<details>
+  <summary>${clueStats}</summary>
+  <ul>
+    ${sortedEvEntries
+      .map(
+        ([w, ev]) => `
+          <li>
+            <strong>${w}</strong>
+            (<abbr title="expected value">EV</abbr> = ${ev.toFixed(1)})
+          </li>`
+      )
+      .join('')}
+  </ul>
+</details>`;
   root.appendChild(clue);
 }
 
