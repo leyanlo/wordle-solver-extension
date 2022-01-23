@@ -183,7 +183,7 @@ ${clueGuess}
 <br />
 <details>
   <summary>${clueStats}</summary>
-  <ul>
+  <ul class="clue-evs">
     ${sortedEvEntries
       .map(
         ([w, ev]) => `
