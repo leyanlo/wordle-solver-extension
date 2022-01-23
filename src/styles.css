@@ -11,4 +11,7 @@
   margin-top: 10px;
   background: white;
   z-index: var(--clue-z-index);
+  width: 350px;
+  max-height: 450px;
+  overflow: auto
 }
