@@ -153,6 +153,7 @@ function onEvalBoard(board, rowIdx) {
     rowOffsets[rowIdx].left + rowOffsets[rowIdx].width + 'px'
   );
   clue.style.setProperty('--clue-height', rowOffsets[rowIdx].height + 'px');
+  clue.style.setProperty('--clue-z-index', (5 - rowIdx).toString());
   clue.innerHTML = `
 ${clueGuess}
 <br />
@@ -170,14 +171,7 @@ ${clueGuess}
       .join('')}
   </ul>
 </details>`;
-  if (rowIdx === 0) {
-    document.body.appendChild(clue);
-  } else {
-    document.body.insertBefore(
-      clue,
-      document.getElementById(`clue-${rowIdx - 1}`)
-    );
-  }
+  document.body.appendChild(clue);
 }
 
 function onEval() {

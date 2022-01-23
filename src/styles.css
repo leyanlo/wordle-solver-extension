@@ -10,4 +10,5 @@
   margin-left: 10px;
   margin-top: 10px;
   background: white;
+  z-index: var(--clue-z-index);
 }
