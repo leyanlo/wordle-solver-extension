@@ -11,6 +11,17 @@ const observer = new MutationObserver(() => onEval());
 let allWords = [];
 let allEvs = {};
 
+function setStyleProperties(clue, rowIdx) {
+  clue.style.setProperty('--clue-top', rowOffsets[rowIdx].top + 'px');
+  clue.style.setProperty('--clue-first-top', rowOffsets[0].top + 'px');
+  clue.style.setProperty(
+    '--clue-left',
+    rowOffsets[rowIdx].left + rowOffsets[rowIdx].width + 'px'
+  );
+  clue.style.setProperty('--clue-height', rowOffsets[rowIdx].height + 'px');
+  clue.style.setProperty('--clue-z-index', (5 - rowIdx).toString());
+}
+
 function init() {
   // add observer to each row
   for (const rowNode of gameRows) {
@@ -35,12 +46,7 @@ function init() {
         break;
       }
 
-      clue.style.setProperty('--clue-top', rowOffsets[i].top + 'px');
-      clue.style.setProperty(
-        '--clue-left',
-        rowOffsets[i].left + rowOffsets[i].width + 'px'
-      );
-      clue.style.setProperty('--clue-height', rowOffsets[i].height + 'px');
+      setStyleProperties(clue, i);
     }
   });
 
@@ -171,13 +177,7 @@ function onEvalBoard(board, rowIdx) {
   const clue = document.createElement('p');
   clue.id = clueId;
   clue.className = 'clue';
-  clue.style.setProperty('--clue-top', rowOffsets[rowIdx].top + 'px');
-  clue.style.setProperty(
-    '--clue-left',
-    rowOffsets[rowIdx].left + rowOffsets[rowIdx].width + 'px'
-  );
-  clue.style.setProperty('--clue-height', rowOffsets[rowIdx].height + 'px');
-  clue.style.setProperty('--clue-z-index', (5 - rowIdx).toString());
+  setStyleProperties(clue, rowIdx);
   clue.innerHTML = `
 ${clueGuess}
 <br />

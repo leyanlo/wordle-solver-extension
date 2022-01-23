@@ -14,6 +14,6 @@
 }
 
 .clue-evs {
-  max-height: calc(438px - var(--clue-top));
+  max-height: calc(352px + var(--clue-first-top) - var(--clue-top));
   overflow: auto;
 }
