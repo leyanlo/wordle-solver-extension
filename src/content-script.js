@@ -181,7 +181,7 @@ function onEvalBoard(board, rowIdx) {
   clue.innerHTML = `
 ${clueGuess}
 <br />
-<details>
+<details open>
   <summary>${clueStats}</summary>
   <ul class="clue-evs">
     ${sortedEvEntries
@@ -196,6 +196,12 @@ ${clueGuess}
   </ul>
 </details>`;
   document.body.appendChild(clue);
+
+  // close previous clues
+  for (let i = 0; i < rowIdx; i++) {
+    const clue = document.getElementById(`clue-${i}`);
+    clue.querySelector('details').removeAttribute('open');
+  }
 }
 
 function onEval() {
