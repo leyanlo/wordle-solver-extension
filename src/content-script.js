@@ -20,6 +20,30 @@ function init() {
     });
   }
 
+  // update clue positions on resize
+  window.addEventListener('resize', () => {
+    const rowOffsets = [...gameRows].map((rowNode) => ({
+      top: rowNode.offsetTop,
+      left: rowNode.offsetLeft,
+      width: rowNode.offsetWidth,
+      height: rowNode.offsetHeight,
+    }));
+
+    for (let i = 0; i < 6; i++) {
+      const clue = document.getElementById(`clue-${i}`);
+      if (!clue) {
+        break;
+      }
+
+      clue.style.setProperty('--clue-top', rowOffsets[i].top + 'px');
+      clue.style.setProperty(
+        '--clue-left',
+        rowOffsets[i].left + rowOffsets[i].width + 'px'
+      );
+      clue.style.setProperty('--clue-height', rowOffsets[i].height + 'px');
+    }
+  });
+
   // init allWords and variances, and call onEval
   Promise.all([
     fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
