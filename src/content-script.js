@@ -141,12 +141,18 @@ function onEvalBoard(board, rowIdx) {
 
   let evs = {};
   if (words.length === 0) {
+    // this shouldn’t happen
     return;
+  } else if (words.length === 1) {
+    // avoid computation if one word remaining
+    evs = {
+      [words[0]]: 1,
+    };
   } else if (words.length === allWords.length) {
-    // avoid computation if first word
+    // avoid computation if it’s the first guess
     evs = allEvs;
   } else {
-    for (const a of words) {
+    for (const a of allWords) {
       const counts = {};
       for (const b of words) {
         const tiles = getTiles(a, b);
