@@ -8,7 +8,8 @@
   left: 0;
   transform: translate(var(--clue-left), var(--clue-top));
   margin: 10px;
-  background: white;
+  color: var(--key-text-color);
+  background: var(--color-background);
   z-index: var(--clue-z-index);
   width: 350px;
 }
