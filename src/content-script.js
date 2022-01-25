@@ -8,6 +8,7 @@ let rowOffsets = [...gameRows].map((rowNode) => ({
   height: rowNode.offsetHeight,
 }));
 const observer = new MutationObserver(() => onEval());
+let possibleWords = [];
 let allWords = [];
 let allEvs = {};
 
@@ -50,16 +51,20 @@ function init() {
     }
   });
 
-  // init allWords and variances, and call onEval
+  // init wordlists and evs, and call onEval
   Promise.all([
     fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
       response.json()
     ),
+    fetch(chrome.runtime.getURL('assets/wordlist-extra.json')).then(
+      (response) => response.json()
+    ),
     fetch(chrome.runtime.getURL('assets/evs.json')).then((response) =>
       response.json()
     ),
-  ]).then(([wordlist, evs]) => {
-    allWords = wordlist;
+  ]).then(([wordlist, extraWordlist, evs]) => {
+    possibleWords = wordlist;
+    allWords = wordlist.concat(extraWordlist);
     allEvs = evs;
     onEval();
   });
@@ -126,7 +131,7 @@ function onEvalBoard(board, rowIdx) {
     }
   }
 
-  const words = allWords.filter(
+  const words = possibleWords.filter(
     (word) =>
       word
         .split('')
@@ -148,7 +153,7 @@ function onEvalBoard(board, rowIdx) {
     evs = {
       [words[0]]: 1,
     };
-  } else if (words.length === allWords.length) {
+  } else if (words.length === possibleWords.length) {
     // avoid computation if it’s the first guess
     evs = allEvs;
   } else {
@@ -197,6 +202,7 @@ ${clueGuess}
   <summary>${clueStats}</summary>
   <ul class="clue-evs">
     ${sortedEvEntries
+      .filter(([w]) => words.includes(w))
       .map(
         ([w, ev]) => `
           <li>
