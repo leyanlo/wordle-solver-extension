@@ -180,6 +180,12 @@ function onEvalBoard(board, rowIdx) {
       ? `1 word is possible.`
       : `${words.length} words are possible.`;
 
+  console.log(
+    `${
+      new DOMParser().parseFromString(clueGuess, 'text/html').body.textContent
+    }. ${clueStats}`
+  );
+
   const clue = document.createElement('p');
   clue.id = clueId;
   clue.className = 'clue';
