@@ -1,7 +1,7 @@
 const gameRows = document
   .querySelector('game-app')
   .shadowRoot.querySelectorAll(`game-row`);
-const rowOffsets = [...gameRows].map((rowNode) => ({
+let rowOffsets = [...gameRows].map((rowNode) => ({
   top: rowNode.offsetTop,
   left: rowNode.offsetLeft,
   width: rowNode.offsetWidth,
@@ -33,7 +33,7 @@ function init() {
 
   // update clue positions on resize
   window.addEventListener('resize', () => {
-    const rowOffsets = [...gameRows].map((rowNode) => ({
+    rowOffsets = [...gameRows].map((rowNode) => ({
       top: rowNode.offsetTop,
       left: rowNode.offsetLeft,
       width: rowNode.offsetWidth,
