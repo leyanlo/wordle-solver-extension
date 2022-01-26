@@ -199,7 +199,7 @@ function onEvalBoard(board, rowIdx) {
         ([w, ev]) => `
           <li>
             <strong>${w}</strong>
-            (<abbr title="expected value">EV</abbr> = ${ev.toFixed(1)})
+            (EV = ${ev.toFixed(1)})
           </li>`
       )
       .join('')}
