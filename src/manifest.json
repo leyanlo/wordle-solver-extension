@@ -1,7 +1,7 @@
 {
   "name": "Wordle Solver",
   "description": "Generate guesses for Wordle",
-  "version": "0.2",
+  "version": "0.3",
   "manifest_version": 3,
   "icons": {
     "48": "images/wordle_logo_48x48.png",
