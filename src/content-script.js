@@ -180,24 +180,21 @@ function onEvalBoard(board, rowIdx) {
     .join(' or ')} (<abbr title="expected value">EV</abbr> = ${minEv.toFixed(
     1
   )})`;
+  const clueGuessTitle = new DOMParser().parseFromString(clueGuess, 'text/html')
+    .body.textContent;
   const clueStats =
     words.length === 1
       ? `1 word is possible.`
       : `${words.length} words are possible.`;
 
-  console.log(
-    `${
-      new DOMParser().parseFromString(clueGuess, 'text/html').body.textContent
-    }. ${clueStats}`
-  );
+  console.log(`${clueGuessTitle}. ${clueStats}`);
 
-  const clue = document.createElement('p');
+  const clue = document.createElement('div');
   clue.id = clueId;
   clue.className = 'clue';
   setStyleProperties(clue, rowIdx);
   clue.innerHTML = `
-${clueGuess}
-<br />
+<p class="clue-guess" title="${clueGuessTitle}">${clueGuess}</p>
 <details open>
   <summary>${clueStats}</summary>
   <ul class="clue-evs">

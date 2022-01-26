@@ -14,6 +14,12 @@
   width: 350px;
 }
 
+.clue-guess {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .clue-evs {
   max-height: calc(352px + var(--clue-first-top) - var(--clue-top));
   overflow: auto;
