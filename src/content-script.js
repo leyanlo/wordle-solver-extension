@@ -194,6 +194,7 @@ function onEvalBoard(board, rowIdx) {
   <summary>${clueStats}</summary>
   <ul class="clue-evs">
     ${sortedEvEntries
+      .filter(([w]) => words.includes(w))
       .map(
         ([w, ev]) => `
           <li>
