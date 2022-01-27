@@ -164,7 +164,12 @@ function onEvalBoard(board, rowIdx) {
           .reduce((acc, n) => acc + n) / words.length;
     }
   }
-  const sortedEvEntries = Object.entries(evs).sort(([, a], [, b]) => a - b);
+
+  // sort by ev and priorities words in remaining words list
+  const sortedEvEntries = Object.entries(evs).sort(
+    ([aW, aEv], [bW, bEv]) =>
+      aEv - bEv || -+words.includes(aW) || words.includes(bW)
+  );
   const minEv = sortedEvEntries[0][1];
   const bestWords = sortedEvEntries
     .filter(([, ev]) => ev === minEv)
