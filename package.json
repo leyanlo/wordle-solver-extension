@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/leyanlo/wordle-solver#readme",
   "devDependencies": {
+    "eslint": "^8.7.0",
     "prettier": "^2.2.1"
   }
 }
