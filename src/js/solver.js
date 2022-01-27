@@ -1,28 +1,28 @@
-function getTiles(a, b) {
-  const evals = Array(5).fill('⬛️');
-  const counts = [...a].reduce((acc, char) => {
+export function getTiles(guess, answer) {
+  const evals = Array(5).fill('absent');
+  const counts = [...answer].reduce((acc, char) => {
     acc[char] = (acc[char] ?? 0) + 1;
     return acc;
   }, {});
   const wrongIndexes = [];
 
   for (let i = 0; i < 5; i++) {
-    if (b[i] === a[i]) {
-      evals[i] = '🟩';
-      counts[b[i]]--;
+    if (guess[i] === answer[i]) {
+      evals[i] = 'correct';
+      counts[guess[i]]--;
     } else {
       wrongIndexes.push(i);
     }
   }
 
   for (const i of wrongIndexes) {
-    if (counts[b[i]]) {
-      evals[i] = '🟨';
-      counts[b[i]]--;
+    if (counts[guess[i]]) {
+      evals[i] = 'present';
+      counts[guess[i]]--;
     }
   }
 
-  return evals.join('');
+  return evals;
 }
 
 export function processBoard(board, allWords, allEvs) {
@@ -79,8 +79,8 @@ export function processBoard(board, allWords, allEvs) {
     for (const a of allWords) {
       const counts = {};
       for (const b of words) {
-        const tiles = getTiles(a, b);
-        counts[tiles] = (counts[tiles] ?? 0) + 1;
+        const key = getTiles(b, a).join();
+        counts[key] = (counts[key] ?? 0) + 1;
       }
       evs[a] =
         Object.keys(counts)
