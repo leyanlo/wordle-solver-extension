@@ -1,6 +1,7 @@
 {
   "name": "Wordle Solver",
   "description": "Generate guesses for Wordle",
+  "author": "Leyan Lo",
   "version": "0.4",
   "manifest_version": 3,
   "icons": {
@@ -22,7 +23,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["assets/*"],
+      "resources": ["assets/*", "js/*"],
       "matches": ["https://www.powerlanguage.co.uk/*"]
     }
   ]
