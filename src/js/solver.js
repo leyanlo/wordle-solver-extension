@@ -25,7 +25,7 @@ export function getTiles(guess, answer) {
   return evals;
 }
 
-export function processBoard(board, allWords, allEvs) {
+export function processBoard(board, allWords, allMaxWordsRemaining) {
   const correct = Array(5).fill(null);
   const present = [...Array(5)].map(() => []);
   const absent = [...Array(5)].map(() => []);
@@ -63,18 +63,18 @@ export function processBoard(board, allWords, allEvs) {
         ) && present.flat().every((char) => word.includes(char))
   );
 
-  let evs = {};
+  let maxWordsRemaining = {};
   if (words.length === 0) {
     // this shouldn’t happen
     return;
   } else if (words.length === 1) {
     // avoid computation if one word remaining
-    evs = {
-      [words[0]]: 1,
+    maxWordsRemaining = {
+      [words[0]]: 0,
     };
   } else if (words.length === allWords.length) {
     // avoid computation if it’s the first guess
-    evs = allEvs;
+    maxWordsRemaining = allMaxWordsRemaining;
   } else {
     for (const a of allWords) {
       const counts = {};
@@ -82,30 +82,27 @@ export function processBoard(board, allWords, allEvs) {
         const key = getTiles(b, a).join();
         counts[key] = (counts[key] ?? 0) + 1;
       }
-      evs[a] =
-        Object.keys(counts)
-          .map((key) => counts[key] ** 2)
-          .reduce((acc, n) => acc + n) / words.length;
+      maxWordsRemaining[a] = Math.max(...Object.values(counts));
     }
   }
 
-  // sort by ev and priorities words in remaining words list
-  const sortedEvEntries = Object.entries(evs).sort(
-    ([aW, aEv], [bW, bEv]) =>
-      aEv - bEv || -+words.includes(aW) || words.includes(bW)
+  // sort by max words remaining, prioritizing words in remaining words list
+  const sortedMwrEntries = Object.entries(maxWordsRemaining).sort(
+    ([aW, aMwr], [bW, bMwr]) =>
+      aMwr - bMwr || -+words.includes(aW) || words.includes(bW)
   );
-  const minEv = sortedEvEntries[0][1];
+  const minMwr = sortedMwrEntries[0][1];
   const prevGuesses = board.map((row) =>
     row.map((tile) => tile.letter).join('')
   );
-  const bestWords = sortedEvEntries
-    .filter(([w, ev]) => ev === minEv && !prevGuesses.includes(w))
+  const bestWords = sortedMwrEntries
+    .filter(([w, mwr]) => mwr === minMwr && !prevGuesses.includes(w))
     .map(([w]) => w);
 
   return {
     words,
-    sortedEvEntries,
-    minEv,
+    sortedMwrEntries,
+    minMwr,
     bestWords,
   };
 }

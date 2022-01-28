@@ -6,10 +6,12 @@ const allWords = JSON.parse(
   fs.readFileSync('../src/assets/wordlist.json', 'utf8')
 );
 
-const allEvs = JSON.parse(fs.readFileSync('../src/assets/evs.json', 'utf8'));
+const allMaxWordsRemaining = JSON.parse(
+  fs.readFileSync('../src/assets/max-words-remaining.json', 'utf8')
+);
 
 // calculate distributions for the 10 best words
-for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
+for (const firstGuess of Object.keys(allMaxWordsRemaining).slice(0, 10)) {
   console.log(`First guess: ${firstGuess}`);
   const nGuessesMap = {};
   for (const answer of allWords) {
@@ -29,7 +31,7 @@ for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
       }
       board.push(row);
 
-      const { bestWords } = processBoard(board, allWords, allEvs);
+      const { bestWords } = processBoard(board, allWords, allMaxWordsRemaining);
       guess = bestWords[0];
       nGuesses++;
     }

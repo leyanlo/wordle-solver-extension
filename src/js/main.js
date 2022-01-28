@@ -12,7 +12,7 @@ export function main() {
   }));
   const observer = new MutationObserver(() => onEval());
   let allWords = [];
-  let allEvs = {};
+  let allMaxWordsRemaining = {};
 
   function setStyleProperties(clue, rowIdx) {
     clue.style.setProperty('--clue-top', rowOffsets[rowIdx].top + 'px');
@@ -58,12 +58,12 @@ export function main() {
       fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
         response.json()
       ),
-      fetch(chrome.runtime.getURL('assets/evs.json')).then((response) =>
-        response.json()
+      fetch(chrome.runtime.getURL('assets/max-words-remaining.json')).then(
+        (response) => response.json()
       ),
-    ]).then(([wordlist, evs]) => {
+    ]).then(([wordlist, maxWordsRemaining]) => {
       allWords = wordlist;
-      allEvs = evs;
+      allMaxWordsRemaining = maxWordsRemaining;
       onEval();
     });
   }
@@ -80,17 +80,17 @@ export function main() {
       return;
     }
 
-    const { words, sortedEvEntries, minEv, bestWords } = processBoard(
+    const { words, sortedMwrEntries, minMwr, bestWords } = processBoard(
       board,
       allWords,
-      allEvs
+      allMaxWordsRemaining
     );
 
     const clueGuess = `Best guess: ${bestWords
       .map((w) => `<strong>${w}</strong>`)
-      .join(' or ')} (<abbr title="expected value">EV</abbr> = ${minEv.toFixed(
-      1
-    )})`;
+      .join(
+        ' or '
+      )} (<abbr title="max words remaining">MWR</abbr> = ${minMwr})`;
     const clueGuessTitle = new DOMParser().parseFromString(
       clueGuess,
       'text/html'
@@ -111,13 +111,13 @@ export function main() {
 <details open>
   <summary>${clueStats}</summary>
   <ul class="clue-list">
-    ${sortedEvEntries
+    ${sortedMwrEntries
       .filter(([w]) => words.includes(w))
       .map(
-        ([w, ev]) => `
+        ([w, mwr]) => `
           <li>
             <strong>${w}</strong>
-            (EV = ${ev.toFixed(1)})
+            (MWR = ${mwr})
           </li>`
       )
       .join('')}
