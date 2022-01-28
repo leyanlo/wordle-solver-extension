@@ -25,7 +25,7 @@ export function getTiles(guess, answer) {
   return evals;
 }
 
-export function processBoard(board, allWords, allEvs) {
+export function processBoard(board, possibleWords, allWords, allEvs) {
   const correct = Array(5).fill(null);
   const present = [...Array(5)].map(() => []);
   const absent = [...Array(5)].map(() => []);
@@ -50,7 +50,7 @@ export function processBoard(board, allWords, allEvs) {
     }
   }
 
-  const words = allWords.filter(
+  const words = possibleWords.filter(
     (word) =>
       word
         .split('')
@@ -72,7 +72,7 @@ export function processBoard(board, allWords, allEvs) {
     evs = {
       [words[0]]: 1,
     };
-  } else if (words.length === allWords.length) {
+  } else if (words.length === possibleWords.length) {
     // avoid computation if it’s the first guess
     evs = allEvs;
   } else {

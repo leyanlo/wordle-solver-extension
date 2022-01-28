@@ -2,8 +2,12 @@ import fs from 'fs';
 
 import { getTiles, processBoard } from '../src/js/solver.js';
 
-const allWords = JSON.parse(
+const possibleWords = JSON.parse(
   fs.readFileSync('../src/assets/wordlist.json', 'utf8')
+);
+
+const allWords = possibleWords.concat(
+  JSON.parse(fs.readFileSync('../src/assets/wordlist-extra.json', 'utf8'))
 );
 
 const allEvs = JSON.parse(fs.readFileSync('../src/assets/evs.json', 'utf8'));
@@ -12,7 +16,7 @@ const allEvs = JSON.parse(fs.readFileSync('../src/assets/evs.json', 'utf8'));
 for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
   console.log(`First guess: ${firstGuess}`);
   const nGuessesMap = {};
-  for (const answer of allWords) {
+  for (const answer of possibleWords) {
     const board = [];
     let guess = firstGuess;
     let nGuesses = 1;
@@ -29,7 +33,12 @@ for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
       }
       board.push(row);
 
-      const { bestWords } = processBoard(board, allWords, allEvs);
+      const { bestWords } = processBoard(
+        board,
+        possibleWords,
+        allWords,
+        allEvs
+      );
       guess = bestWords[0];
       nGuesses++;
     }

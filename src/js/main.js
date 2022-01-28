@@ -11,6 +11,7 @@ export function main() {
     height: rowNode.offsetHeight,
   }));
   const observer = new MutationObserver(() => onEval());
+  let possibleWords = [];
   let allWords = [];
   let allEvs = {};
 
@@ -58,11 +59,15 @@ export function main() {
       fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
         response.json()
       ),
+      fetch(chrome.runtime.getURL('assets/wordlist-extra.json')).then(
+        (response) => response.json()
+      ),
       fetch(chrome.runtime.getURL('assets/evs.json')).then((response) =>
         response.json()
       ),
-    ]).then(([wordlist, evs]) => {
-      allWords = wordlist;
+    ]).then(([wordlist, extraWordlist, evs]) => {
+      possibleWords = wordlist;
+      allWords = wordlist.concat(extraWordlist);
       allEvs = evs;
       onEval();
     });
@@ -82,6 +87,7 @@ export function main() {
 
     const { words, sortedEvEntries, minEv, bestWords } = processBoard(
       board,
+      possibleWords,
       allWords,
       allEvs
     );
