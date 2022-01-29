@@ -12,7 +12,7 @@ const allEvs = JSON.parse(fs.readFileSync('../src/assets/evs.json', 'utf8'));
 for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
   console.log(`First guess: ${firstGuess}`);
   const nGuessesMap = {};
-  outer: for (const answer of allWords) {
+  for (const answer of allWords) {
     const board = [];
     let guess = firstGuess;
     let nGuesses = 1;
@@ -21,7 +21,7 @@ for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
       let tiles = getTiles(guess, answer);
       if (tiles.every((t) => t === 'correct')) {
         nGuessesMap[answer] = nGuesses;
-        continue outer;
+        break;
       }
       let row = [];
       for (let i = 0; i < 5; i++) {
