@@ -95,8 +95,11 @@ export function processBoard(board, allWords, allEvs) {
       aEv - bEv || -+words.includes(aW) || words.includes(bW)
   );
   const minEv = sortedEvEntries[0][1];
+  const prevGuesses = board.map((row) =>
+    row.map((tile) => tile.letter).join('')
+  );
   const bestWords = sortedEvEntries
-    .filter(([, ev]) => ev === minEv)
+    .filter(([w, ev]) => ev === minEv && !prevGuesses.includes(w))
     .map(([w]) => w);
 
   return {
