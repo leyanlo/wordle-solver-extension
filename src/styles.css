@@ -20,7 +20,7 @@
   text-overflow: ellipsis;
 }
 
-.clue-evs {
+.clue-list {
   max-height: calc(352px + var(--clue-first-top) - var(--clue-top));
   overflow: auto;
 }

@@ -53,7 +53,7 @@ export function main() {
       }
     });
 
-    // init wordlists and evs, and call onEval
+    // init wordlists and preprocessed data, and call onEval
     Promise.all([
       fetch(chrome.runtime.getURL('assets/wordlist.json')).then((response) =>
         response.json()
@@ -110,7 +110,7 @@ export function main() {
 <p class="clue-guess" title="${clueGuessTitle}">${clueGuess}</p>
 <details open>
   <summary>${clueStats}</summary>
-  <ul class="clue-evs">
+  <ul class="clue-list">
     ${sortedEvEntries
       .filter(([w]) => words.includes(w))
       .map(
