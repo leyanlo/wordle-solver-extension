@@ -10,7 +10,7 @@ export function main() {
     width: rowNode.offsetWidth,
     height: rowNode.offsetHeight,
   }));
-  const observer = new MutationObserver(() => onEval());
+  const observer = new MutationObserver(onEval);
   let allWords = [];
   let allEvs = {};
 
@@ -69,19 +69,20 @@ export function main() {
   }
   init();
 
-  function onEvalBoard(board, rowIdx) {
+  function onEvalBoard(boardState, evaluations, rowIdx, hardMode) {
     const clueId = `clue-${rowIdx}`;
     if (
       document.getElementById(clueId) ||
-      board[board.length - 1]?.every(
-        ({ evaluation }) => evaluation === 'correct'
-      )
+      evaluations[rowIdx - 1]?.every((e) => e === 'correct')
     ) {
       return;
     }
 
     const { words, sortedEvEntries, minEv, bestWords } = processBoard(
-      board,
+      boardState,
+      evaluations,
+      rowIdx,
+      hardMode,
       allWords,
       allEvs
     );
@@ -133,20 +134,12 @@ export function main() {
   }
 
   function onEval() {
-    const board = [];
-    outer: for (let i = 0; i < gameRows.length; i++) {
-      onEvalBoard(board, i);
-      const rowNode = gameRows[i];
-      const row = [];
-      for (const tileNode of rowNode.shadowRoot.querySelectorAll('game-tile')) {
-        const letter = tileNode.getAttribute('letter');
-        const evaluation = tileNode.getAttribute('evaluation');
-        if (!evaluation) {
-          break outer;
-        }
-        row.push({ letter, evaluation });
-      }
-      board.push(row);
+    const { boardState, evaluations, hardMode } = JSON.parse(
+      localStorage.gameState
+    );
+
+    for (let i = 0; i <= boardState.filter(Boolean).length; i++) {
+      onEvalBoard(boardState, evaluations, i, hardMode);
     }
   }
 }

@@ -25,23 +25,29 @@ export function getTiles(guess, answer) {
   return evals;
 }
 
-export function processBoard(board, allWords, allEvs) {
+export function processBoard(
+  boardState,
+  evaluations,
+  rowIdx,
+  hardMode,
+  allWords,
+  allEvs
+) {
   const correct = Array(5).fill(null);
   const present = [...Array(5)].map(() => []);
   const absent = [...Array(5)].map(() => []);
 
-  outer: for (const row of board) {
-    for (let i = 0; i < row.length; i++) {
-      const { letter, evaluation } = row[i];
-      switch (evaluation) {
+  outer: for (let i = 0; i < rowIdx; i++) {
+    for (let j = 0; j < 5; j++) {
+      switch (evaluations[i]?.[j]) {
         case 'correct':
-          correct[i] = letter;
+          correct[j] = boardState[i][j];
           break;
         case 'present':
-          present[i].push(letter);
+          present[j].push(boardState[i][j]);
           break;
         case 'absent':
-          absent[i].push(letter);
+          absent[j].push(boardState[i][j]);
           break;
         default:
           // end of rows
@@ -95,9 +101,7 @@ export function processBoard(board, allWords, allEvs) {
       aEv - bEv || -+words.includes(aW) || words.includes(bW)
   );
   const minEv = sortedEvEntries[0][1];
-  const prevGuesses = board.map((row) =>
-    row.map((tile) => tile.letter).join('')
-  );
+  const prevGuesses = boardState.slice(0, rowIdx).filter(Boolean);
   const bestWords = sortedEvEntries
     .filter(([w, ev]) => ev === minEv && !prevGuesses.includes(w))
     .map(([w]) => w);
