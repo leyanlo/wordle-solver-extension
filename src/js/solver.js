@@ -82,7 +82,7 @@ export function processBoard(
     // avoid computation if it’s the first guess
     evs = allEvs;
   } else {
-    for (const a of allWords) {
+    for (const a of hardMode ? words : allWords) {
       const counts = {};
       for (const b of words) {
         const key = getTiles(b, a).join();
