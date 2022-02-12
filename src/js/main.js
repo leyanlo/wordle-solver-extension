@@ -135,7 +135,7 @@ export function main() {
 
   function onEval() {
     const { boardState, evaluations, hardMode } = JSON.parse(
-      localStorage.gameState
+      localStorage['nyt-wordle-state']
     );
 
     for (let i = 0; i <= boardState.filter(Boolean).length; i++) {

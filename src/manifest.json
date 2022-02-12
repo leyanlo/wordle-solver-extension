@@ -16,7 +16,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.powerlanguage.co.uk/wordle/"],
+      "matches": ["https://www.nytimes.com/games/wordle/index.html"],
       "css": ["styles.css"],
       "js": ["content-script.js"]
     }
@@ -24,7 +24,7 @@
   "web_accessible_resources": [
     {
       "resources": ["assets/*", "js/*"],
-      "matches": ["https://www.powerlanguage.co.uk/*"]
+      "matches": ["https://www.nytimes.com/*"]
     }
   ]
 }
