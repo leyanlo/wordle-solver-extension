@@ -13,7 +13,8 @@ for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
   console.log(`First guess: ${firstGuess}`);
   const nGuessesMap = {};
   for (const answer of allWords) {
-    const board = [];
+    const boardState = [];
+    const evaluations = [];
     let guess = firstGuess;
     let nGuesses = 1;
     // eslint-disable-next-line no-constant-condition
@@ -23,13 +24,17 @@ for (const firstGuess of Object.keys(allEvs).slice(0, 10)) {
         nGuessesMap[answer] = nGuesses;
         break;
       }
-      let row = [];
-      for (let i = 0; i < 5; i++) {
-        row.push({ letter: guess[i], evaluation: tiles[i] });
-      }
-      board.push(row);
+      boardState.push(guess);
+      evaluations.push(tiles);
 
-      const { bestWords } = processBoard(board, allWords, allEvs);
+      const { bestWords } = processBoard(
+        boardState,
+        evaluations,
+        nGuesses,
+        false,
+        allWords,
+        allEvs
+      );
       guess = bestWords[0];
       nGuesses++;
     }
